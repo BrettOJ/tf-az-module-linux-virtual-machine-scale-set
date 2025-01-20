@@ -204,12 +204,13 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
     timeout = var.spot_restore.timeout
   }
 
-  admin_ssh_key {
+  dynamic admin_ssh_key {
+    for_each = var.admin_ssh_key != null ? [var.admin_ssh_key] : []
+    content {
     username   = var.admin_ssh_key.username
     public_key = var.admin_ssh_key.public_key
   }
 }
-
-
+}
 
 

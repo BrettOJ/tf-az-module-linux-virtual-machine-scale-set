@@ -191,6 +191,7 @@ variable "automatic_os_upgrade_policy" {
     disable_automatic_rollback  = bool
     enable_automatic_os_upgrade = bool
   })
+  default = null
 }
 
 variable "automatic_instance_repair" {

@@ -7,6 +7,7 @@ locals {
   }
   tags = {
     environment = "Production"
+    created_by  = "Terraform"
   }
 }
 module "resource_groups" {
@@ -16,8 +17,7 @@ module "resource_groups" {
       name                   = var.resource_group_name
       location               = var.location
       naming_convention_info = local.naming_convention_info
-      tags = {
-      }
+      tags = local.tags
     }
   }
 }
@@ -54,8 +54,20 @@ module "azure_subnet" {
   }
 }
 
+module "tls_private_key" {
+  source                 = "git::https://github.com/BrettOJ/tf-az-module-tls-private-key?ref=main"
+  algorithm              = var.algorithm
+  rsa_bits               = var.rsa_bits
+  ecdsa_curve            = var.ecdsa_curve
+  resource_group_name    = var.resource_group_name
+  create_ssh_public_key  = var.create_ssh_public_key
+  location               = var.location
+  naming_convention_info = local.naming_convention_info
+  tags                   = local.tags
+}
+
 module "azurerm_linux_virtual_machine_scale_set" {
-  source                                            = "git::https://tf-az-module-linux-virtual-machine-scale-set"
+  source                                            = "git::https://git::https://github.com/BrettOJ/tf-az-module-linux-virtual-machine-scale-set"
   resource_group_name                               = var.resource_group_name
   location                                          = var.location
   sku                                               = var.sku
@@ -82,7 +94,7 @@ module "azurerm_linux_virtual_machine_scale_set" {
   secure_boot_enabled                               = var.secure_boot_enabled
   single_placement_group                            = var.single_placement_group
   source_image_id                                   = var.source_image_id
-  tags                                              = var.tags
+  tags                                              = local.tags
   upgrade_mode                                      = var.upgrade_mode
   user_data                                         = var.user_data
   vtpm_enabled                                      = var.vtpm_enabled
@@ -99,6 +111,7 @@ module "azurerm_linux_virtual_machine_scale_set" {
     storage_account_uri = var.boot_diagnostics_storage_account_uri
   }
 
+/*
   data_disk = {
     name                           = var.data_disk_name
     caching                        = var.data_disk_caching
@@ -135,7 +148,7 @@ module "azurerm_linux_virtual_machine_scale_set" {
     order                  = var.gallery_application_order
     tag                    = var.gallery_application_tag
   }
-
+*/
   identity = {
     type         = var.identity_type
     identity_ids = var.identity_identity_ids
@@ -240,11 +253,7 @@ module "azurerm_linux_virtual_machine_scale_set" {
     timeout = var.spot_restore_timeout
   }
 
-  admin_ssh_key = {
-    username   = var.admin_ssh_key_username
-    public_key = var.admin_ssh_key_public_key
-  }
-
+  admin_ssh_key = null
 }
 
 

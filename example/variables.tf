@@ -46,12 +46,6 @@ variable "flow_timeout_in_minutes" {
   default = 4
 }
 
-variable "tags" {
-  type = map(any)
-  default = {
-    environment = "dev"
-  }
-}
 
 variable "create_nsg" {
   type    = bool
@@ -99,11 +93,6 @@ variable "do_not_run_extensions_on_overprovisioned_machines" {
   description = "Should Virtual Machine Extensions be run on Overprovisioned Virtual Machines in the Scale Set?"
   type        = bool
   default     = false
-}
-
-variable "edge_zone" {
-  description = "Specifies the Edge Zone within the Azure Region where this Linux Virtual Machine Scale Set should exist."
-  type        = string
 }
 
 variable "encryption_at_host_enabled" {
@@ -188,11 +177,6 @@ variable "source_image_id" {
   type        = string
 }
 
-variable "tags" {
-  description = "A mapping of tags which should be assigned to this Virtual Machine Scale Set."
-  type        = map(string)
-  default     = {}
-}
 
 variable "upgrade_mode" {
   description = "Specifies how Upgrades (e.g. changing the Image/SKU) should be performed to Virtual Machine Instances."
@@ -677,6 +661,31 @@ variable "admin_ssh_key_public_key" {
   type        = string
 }
 
+# SSH Variables
+
+variable "algorithm" {
+  description = "The algorithm to use for the key. RSA or ECDSA."
+  type        = string
+  default     = "RSA"
+}
+
+variable "rsa_bits" {
+  description = "The number of bits to use for the RSA key."
+  type        = number
+  default     = 2048
+}
+
+variable "ecdsa_curve" {
+  description = "The name of the elliptic curve to use for the ECDSA key."
+  type        = string
+  default     = "P384"
+}
+
+variable "create_ssh_public_key" {
+  description = "Create SSH Public Key."
+  type        = bool
+  default     = true
+}
 
 
 
