@@ -656,13 +656,7 @@ variable "admin_ssh_key_username" {
   type        = string
 }
 
-variable "admin_ssh_key_public_key" {
-  description = "The Public Key of the local administrator on each Virtual Machine Scale Set instance."
-  type        = string
-}
-
 # SSH Variables
-
 variable "algorithm" {
   description = "The algorithm to use for the key. RSA or ECDSA."
   type        = string

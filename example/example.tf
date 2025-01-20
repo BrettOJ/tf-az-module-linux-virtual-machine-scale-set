@@ -17,7 +17,7 @@ module "resource_groups" {
       name                   = var.resource_group_name
       location               = var.location
       naming_convention_info = local.naming_convention_info
-      tags = local.tags
+      tags                   = local.tags
     }
   }
 }
@@ -59,7 +59,7 @@ module "tls_private_key" {
   algorithm              = var.algorithm
   rsa_bits               = var.rsa_bits
   ecdsa_curve            = var.ecdsa_curve
-  resource_group_name    = var.resource_group_name
+  resource_group_name    = module.resource_groups.rg_output[1].name
   create_ssh_public_key  = var.create_ssh_public_key
   location               = var.location
   naming_convention_info = local.naming_convention_info
@@ -67,7 +67,7 @@ module "tls_private_key" {
 }
 
 module "azurerm_linux_virtual_machine_scale_set" {
-  source                                            = "git::https://git::https://github.com/BrettOJ/tf-az-module-linux-virtual-machine-scale-set"
+  source                                            = "../" # git::https://git::https://github.com/BrettOJ/tf-az-module-linux-virtual-machine-scale-set"
   resource_group_name                               = var.resource_group_name
   location                                          = var.location
   sku                                               = var.sku
@@ -100,18 +100,14 @@ module "azurerm_linux_virtual_machine_scale_set" {
   vtpm_enabled                                      = var.vtpm_enabled
   zone_balance                                      = var.zone_balance
   zones                                             = var.zones
+  naming_convention_info                            = local.naming_convention_info
 
-  automatic_instance_repair = {
-    enabled      = var.automatic_instance_repair_enabled
-    grace_period = var.automatic_instance_repair_grace_period
-    action       = var.automatic_instance_repair_action
-  }
-
+  extension = null
   boot_diagnostics = {
     storage_account_uri = var.boot_diagnostics_storage_account_uri
   }
 
-/*
+  /*
   data_disk = {
     name                           = var.data_disk_name
     caching                        = var.data_disk_caching
@@ -172,12 +168,9 @@ module "azurerm_linux_virtual_machine_scale_set" {
         name                    = var.network_interface_ip_configuration_public_ip_address_name
         domain_name_label       = var.network_interface_ip_configuration_public_ip_address_domain_name_label
         idle_timeout_in_minutes = var.network_interface_ip_configuration_public_ip_address_idle_timeout_in_minutes
-        ip_tag = {
-          tag  = var.network_interface_ip_configuration_public_ip_address_ip_tag_tag
-          type = var.network_interface_ip_configuration_public_ip_address_ip_tag_type
-        }
-        public_ip_prefix_id = var.network_interface_ip_configuration_public_ip_address_public_ip_prefix_id
-        version             = var.network_interface_ip_configuration_public_ip_address_version
+        ip_tag                  = null
+        public_ip_prefix_id     = var.network_interface_ip_configuration_public_ip_address_public_ip_prefix_id
+        version                 = var.network_interface_ip_configuration_public_ip_address_version
       }
       subnet_id = var.network_interface_ip_configuration_subnet_id
       version   = var.network_interface_ip_configuration_version
@@ -196,12 +189,6 @@ module "azurerm_linux_virtual_machine_scale_set" {
     secure_vm_disk_encryption_set_id = var.os_disk_secure_vm_disk_encryption_set_id
     security_encryption_type         = var.os_disk_security_encryption_type
     write_accelerator_enabled        = var.os_disk_write_accelerator_enabled
-  }
-
-  plan = {
-    name      = var.plan_name
-    publisher = var.plan_publisher
-    product   = var.plan_product
   }
 
   additional_capabilities = {
@@ -223,13 +210,15 @@ module "azurerm_linux_virtual_machine_scale_set" {
     maximum_surge_instances_enabled         = var.rolling_upgrade_policy_maximum_surge_instances_enabled
   }
 
-  secret = {
+  secret = null
+  /*
+  {
     certificate = {
       url = var.secret_certificate_url
     }
     key_vault_id = var.secret_key_vault_id
   }
-
+*/
 
   termination_notification = {
     enabled = var.termination_notification_enabled
@@ -248,12 +237,10 @@ module "azurerm_linux_virtual_machine_scale_set" {
     enable_automatic_os_upgrade = var.automatic_os_upgrade_policy_enable_automatic_os_upgrade
   }
 
-  spot_restore = {
-    enabled = var.spot_restore_enabled
-    timeout = var.spot_restore_timeout
+  admin_ssh_key = {
+    username   = var.admin_ssh_key_username
+    public_key = module.tls_private_key.tls_private_key_output.public_key_openssh
   }
-
-  admin_ssh_key = null
 }
 
 

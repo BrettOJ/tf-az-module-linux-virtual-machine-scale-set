@@ -108,25 +108,28 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
     network_security_group_id     = var.network_interface.network_security_group_id
     primary                       = var.network_interface.primary
     ip_configuration {
-      name                                         = var.ip_configuration.name
-      application_gateway_backend_address_pool_ids = var.ip_configuration.application_gateway_backend_address_pool_ids
-      application_security_group_ids               = var.ip_configuration.application_security_group_ids
-      load_balancer_backend_address_pool_ids       = var.ip_configuration.load_balancer_backend_address_pool_ids
-      load_balancer_inbound_nat_rules_ids          = var.ip_configuration.load_balancer_inbound_nat_rules_ids
-      primary                                      = var.ip_configuration.primary
+      name                                         = var.network_interface.ip_configuration.name
+      application_gateway_backend_address_pool_ids = var.network_interface.ip_configuration.application_gateway_backend_address_pool_ids
+      application_security_group_ids               = var.network_interface.ip_configuration.application_security_group_ids
+      load_balancer_backend_address_pool_ids       = var.network_interface.ip_configuration.load_balancer_backend_address_pool_ids
+      load_balancer_inbound_nat_rules_ids          = var.network_interface.ip_configuration.load_balancer_inbound_nat_rules_ids
+      primary                                      = var.network_interface.ip_configuration.primary
       public_ip_address {
-        name                    = var.public_ip_address.name
-        domain_name_label       = var.public_ip_address.domain_name_label
-        idle_timeout_in_minutes = var.public_ip_address.idle_timeout_in_minutes
-        ip_tag {
-          tag  = var.ip_tag.tag
-          type = var.ip_tag.type
+        name                    = var.network_interface.ip_configuration.public_ip_address.name
+        domain_name_label       = var.network_interface.ip_configuration.public_ip_address.domain_name_label
+        idle_timeout_in_minutes = var.network_interface.ip_configuration.public_ip_address.idle_timeout_in_minutes
+        dynamic "ip_tag" {
+          for_each = var.network_interface.ip_configuration.public_ip_address.ip_tag != null ? [var.network_interface.ip_configuration.public_ip_address.ip_tag] : []
+          content {
+          tag  = var.network_interface.ip_configuration.public_ip_address.ip_tag.tag
+          type = var.network_interface.ip_configuration.public_ip_address.ip_tag.type
         }
-        public_ip_prefix_id = var.public_ip_address.public_ip_prefix_id
-        version             = var.public_ip_address.version
+      }         
+        public_ip_prefix_id = var.network_interface.ip_configuration.public_ip_address.public_ip_prefix_id
+        version             = var.network_interface.ip_configuration.public_ip_address.version
       }
-      subnet_id = var.ip_configuration.subnet_id
-      version   = var.ip_configuration.version
+      subnet_id = var.network_interface.ip_configuration.subnet_id
+      version   = var.network_interface.ip_configuration.version
     }
   }
 
@@ -134,8 +137,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
     caching              = var.os_disk.caching
     storage_account_type = var.os_disk.storage_account_type
     diff_disk_settings {
-      option    = var.diff_disk_settings.option
-      placement = var.diff_disk_settings.placement
+      option    = var.os_disk.diff_disk_settings.option
+      placement = var.os_disk.diff_disk_settings.placement
     }
     disk_encryption_set_id           = var.os_disk.disk_encryption_set_id
     disk_size_gb                     = var.os_disk.disk_size_gb
@@ -175,11 +178,14 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
     }
   }
 
-  secret {
-    certificate {
-      url = var.certificate.url
-    }
-    key_vault_id = var.secret.key_vault_id
+  dynamic secret {
+    for_each = var.secret != null ? [var.secret] : []
+    content {
+      certificate {
+          url = var.certificate.url
+        }
+        key_vault_id = var.secret.key_vault_id
+  }
   }
 
   termination_notification {
@@ -199,9 +205,12 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
     enable_automatic_os_upgrade = var.automatic_os_upgrade_policy.enable_automatic_os_upgrade
   }
 
-  spot_restore {
-    enabled = var.spot_restore.enabled
-    timeout = var.spot_restore.timeout
+  dynamic spot_restore {
+    for_each = var.spot_restore != null ? [var.spot_restore] : []
+    content {
+      enabled = var.spot_restore.enabled
+      timeout = var.spot_restore.timeout
+    }
   }
 
   dynamic admin_ssh_key {

@@ -333,6 +333,7 @@ variable "plan" {
     publisher = string
     product   = string
   })
+  default = null
 }
 
 variable "scale_in" {
@@ -394,5 +395,17 @@ variable "spot_restore" {
   type = object({
     enabled = bool
     timeout = string
+  })
+
+}
+  
+
+variable "naming_convention_info" {
+  description = "A naming_convention_info block as defined below."
+  type = object({
+    name = string
+    app = string
+    site     = string
+    env   = string
   })
 }
