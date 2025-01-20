@@ -4,7 +4,7 @@ location                                          = "southeastasia"
 resource_group_name                               = "example-resources"
 admin_username                                    = "adminuser"
 instances                                         = 1
-sku                                               = "Standard_F2"
+sku                                               = "Standard_F2s_v2"
 capacity_reservation_group_id                     = null
 computer_name_prefix                              = "vmss"
 custom_data                                       = null
@@ -76,13 +76,13 @@ network_interface_dns_servers                                                   
 network_interface_enable_accelerated_networking                                 = false
 network_interface_enable_ip_forwarding                                          = false
 network_interface_network_security_group_id                                     = null
-network_interface_primary                                                       = false
+network_interface_primary                                                       = true
 network_interface_ip_configuration_name                                         = "vmss-nic-ip"
 network_interface_ip_configuration_application_gateway_backend_address_pool_ids = []
 network_interface_ip_configuration_application_security_group_ids               = []
 network_interface_ip_configuration_load_balancer_backend_address_pool_ids       = []
 network_interface_ip_configuration_load_balancer_inbound_nat_rules_ids          = []
-network_interface_ip_configuration_primary                                      = false
+network_interface_ip_configuration_primary                                      = true
 network_interface_ip_configuration_public_ip_address_name                       = "vmss-nic-ip-public-ip"
 network_interface_ip_configuration_public_ip_address_domain_name_label          = null
 network_interface_ip_configuration_public_ip_address_idle_timeout_in_minutes    = 30
@@ -90,13 +90,13 @@ network_interface_ip_configuration_public_ip_address_ip_tag_tag                 
 network_interface_ip_configuration_public_ip_address_ip_tag_type                = null
 network_interface_ip_configuration_public_ip_address_public_ip_prefix_id        = null
 network_interface_ip_configuration_public_ip_address_version                    = null
-network_interface_ip_configuration_subnet_id                                    = null
+
 network_interface_ip_configuration_version                                      = null
 
 os_disk_caching                          = "ReadOnly"
 os_disk_storage_account_type             = "StandardSSD_LRS"
 os_disk_disk_encryption_set_id           = null
-os_disk_disk_size_gb                     = 0
+os_disk_disk_size_gb                     = 30
 os_disk_secure_vm_disk_encryption_set_id = null
 os_disk_security_encryption_type         = null
 os_disk_write_accelerator_enabled        = false

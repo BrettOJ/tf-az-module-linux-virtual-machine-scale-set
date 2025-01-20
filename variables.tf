@@ -396,7 +396,7 @@ variable "spot_restore" {
     enabled = bool
     timeout = string
   })
-
+default = null
 }
   
 

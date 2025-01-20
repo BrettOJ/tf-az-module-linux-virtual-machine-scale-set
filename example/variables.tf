@@ -470,10 +470,6 @@ variable "network_interface_ip_configuration_public_ip_address_version" {
   type        = string
 }
 
-variable "network_interface_ip_configuration_subnet_id" {
-  description = "The ID of the Subnet which should be associated with the IP Configuration."
-  type        = string
-}
 
 variable "network_interface_ip_configuration_version" {
   description = "The Version of the IP Configuration."

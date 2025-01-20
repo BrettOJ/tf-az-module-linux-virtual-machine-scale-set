@@ -136,10 +136,13 @@ resource "azurerm_linux_virtual_machine_scale_set" "linux_vmss" {
   os_disk {
     caching              = var.os_disk.caching
     storage_account_type = var.os_disk.storage_account_type
-    diff_disk_settings {
+   dynamic diff_disk_settings {
+      for_each = var.os_disk.diff_disk_settings != null ? [var.os_disk.diff_disk_settings] : []
+      content {
       option    = var.os_disk.diff_disk_settings.option
       placement = var.os_disk.diff_disk_settings.placement
     }
+  }
     disk_encryption_set_id           = var.os_disk.disk_encryption_set_id
     disk_size_gb                     = var.os_disk.disk_size_gb
     secure_vm_disk_encryption_set_id = var.os_disk.secure_vm_disk_encryption_set_id

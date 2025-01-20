@@ -42,7 +42,7 @@ module "azure_subnet" {
   tags                   = local.tags
   create_nsg             = var.create_nsg
   subnets = {
-    001 = {
+    1 = {
       address_prefixes                          = ["10.0.1.0/24"]
       service_endpoints                         = null
       private_endpoint_network_policies_enabled = null
@@ -172,7 +172,7 @@ module "azurerm_linux_virtual_machine_scale_set" {
         public_ip_prefix_id     = var.network_interface_ip_configuration_public_ip_address_public_ip_prefix_id
         version                 = var.network_interface_ip_configuration_public_ip_address_version
       }
-      subnet_id = var.network_interface_ip_configuration_subnet_id
+      subnet_id = module.azure_subnet.snet_output[1].id
       version   = var.network_interface_ip_configuration_version
     }
   }
@@ -180,10 +180,7 @@ module "azurerm_linux_virtual_machine_scale_set" {
   os_disk = {
     caching              = var.os_disk_caching
     storage_account_type = var.os_disk_storage_account_type
-    diff_disk_settings = {
-      option    = var.diff_disk_settings_option
-      placement = var.diff_disk_settings_placement
-    }
+    diff_disk_settings = null
     disk_encryption_set_id           = var.os_disk_disk_encryption_set_id
     disk_size_gb                     = var.os_disk_disk_size_gb
     secure_vm_disk_encryption_set_id = var.os_disk_secure_vm_disk_encryption_set_id
